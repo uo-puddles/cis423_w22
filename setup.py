@@ -21,7 +21,7 @@ class DropColumnsTransformer(BaseEstimator, TransformerMixin):
     assert not remaining_set, f'DropColumnsTransformer.transform unknown columns {remaining_set}'
     
     X_ = X.copy()
-    if action=='drop':
+    if self.action=='drop':
       X_ = X_.drop(columns=self.column_list)
     else:
       X_ = X_[self.column_list]
