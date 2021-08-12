@@ -3,6 +3,34 @@ from sklearn.pipeline import Pipeline
 import pandas as pd
 import numpy as np
 
+#drop by removing or keeping
+class DropColumnsTransformer(BaseEstimator, TransformerMixin):
+  def __init__(self, column_list, action='drop'):
+    assert action in ['keep', 'drop'], f'DropColumnsTransformer action {action} not in ["keep", "drop"]'
+    self.column_list = column_list
+    self.action = action
+    
+  #fill in rest below
+  def fit(self, X, y = None):
+    print("Warning: DropColumnsTransformer.fit does nothing.")
+    return X
+
+  def transform(self, X):
+    assert isinstance(X, pd.core.frame.DataFrame), f'DropColumnsTransformer.transform expected Dataframe but got {type(X)} instead.'
+    remaining_set = set(self.column_list) - set(X.columns.to_list())
+    assert not remaining_set, f'DropColumnsTransformer.transform unknown columns {remaining_set}'
+    
+    X_ = X.copy()
+    if action=='drop':
+      X_ = X_.drop(columns=self.column_list)
+    else:
+      X_ = X_[self.column_list]
+    return X_
+
+  def fit_transform(self, X, y = None):
+    result = self.transform(X)
+    return result
+  
 #This class maps values in a column, numeric or categorical.
 #Importantly, it does not change NaNs, leaving that for the imputer step.
 class MappingTransformer(BaseEstimator, TransformerMixin):
