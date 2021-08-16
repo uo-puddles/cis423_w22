@@ -77,7 +77,32 @@ class OHETransformer(BaseEstimator, TransformerMixin):
   def fit_transform(self, X, y = None):
     result = self.transform(X)
     return result
+  
+class Sigma3Transformer(BaseEstimator, TransformerMixin):
+  def __init__(self, target_column):  
+    self.target_column = target_column
+    
+  def fit(self, X, y = None):
+    print("Warning: Sigma3Transformer.fit does nothing.")
+    return self
 
+  def transform(self, X):
+    assert isinstance(X, pd.core.frame.DataFrame), f'Sigma3Transformer.transform expected Dataframe but got {type(X)} instead.'
+    X_ = X.copy()
+    mean = X_[self.target_column].mean()
+    sigma = X_[self.target_column].std()
+    high_wall = mean + 3*sigma
+    low_wall = mean - 3*sigma
+    print(f'Sigma3Transformer mean, sigma, low_wall, high_wall: {round(mean, 2)}, {round(sigma, 2)}, {round(low_wall, 2)}, {round(high_wall, 2)}')
+    X_[self.target_column] = X_[self.target_column].clip(lower=low_wall, upper=high_wall)
+    return X_
+
+  def fit_transform(self, X, y = None):
+    result = self.transform(X)
+    return result
+
+  
+  
 #from week 2
 titanic_transformer_v1 = Pipeline(steps=[
     ('gender', MappingTransformer('Gender', {'Male': 0, 'Female': 1})),
