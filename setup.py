@@ -105,6 +105,38 @@ class Sigma3Transformer(BaseEstimator, TransformerMixin):
     return result
 
   
+class TukeyTransformer(BaseEstimator, TransformerMixin):
+  def __init__(self, target_column, fence='outer'):
+    assert fence in ['inner', 'outer']
+    self.target_column = target_column
+    self.fence = fence
+    
+  def fit(self, X, y = None):
+    print("Warning: Sigma3Transformer.fit does nothing.")
+    return self
+
+  def transform(self, X):
+    assert isinstance(X, pd.core.frame.DataFrame), f'Sigma3Transformer.transform expected Dataframe but got {type(X)} instead.'
+    X_ = X.copy()
+    q1 = X_[self.target_column].quantile(0.25)
+    q3 = X_[self.target_column].quantile(0.75)
+    iqr = q3-q1
+    inner_low = q1-1.5*iqr
+    outer_low = q1-3*iqr
+    inner_high = q1+1.5*iqr
+    outer_high = q3+3*iqr
+    print(f'TukeyTransformer inner_low, inner_high, outer_low, outer_high: {round(inner_low, 2)}, {round(outer_low, 2)}, {round(inner_high, 2)}, {round(outer_high, 2)}')
+    if self.fence=='inner':
+      X_[self.target_column] = X_[self.target_column].clip(lower=inner_low, upper=inner_high)
+    elif self.fence=='outer':
+      X_[self.target_column] = X_[self.target_column].clip(lower=outer_low, upper=outer_high)
+    else:
+      assert False, f"fence has unrecognized value {self.fence}"
+    return X_
+
+  def fit_transform(self, X, y = None):
+    result = self.transform(X)
+    return result  
   
 #from week 2
 titanic_transformer_v1 = Pipeline(steps=[
