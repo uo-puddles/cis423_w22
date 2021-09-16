@@ -30,7 +30,7 @@ class DropColumnsTransformer(BaseEstimator, TransformerMixin):
       X_ = X_.drop(columns=actual_list)
     else:
       if actual_list != self.column_list:
-        print(f'DropColumnsTransformer.transform warning: columns to keep not in X: {set(self.column_list) - set(xcols}')
+        print(f'DropColumnsTransformer.transform warning: columns to keep not in X: {set(self.column_list) - set(xcols)}')
       X_ = X_[actual_list]
     return X_
 
