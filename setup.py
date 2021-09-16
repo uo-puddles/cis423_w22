@@ -20,14 +20,18 @@ class DropColumnsTransformer(BaseEstimator, TransformerMixin):
 
   def transform(self, X):
     assert isinstance(X, pd.core.frame.DataFrame), f'DropColumnsTransformer.transform expected Dataframe but got {type(X)} instead.'
-    remaining_set = set(self.column_list) - set(X.columns.to_list())
-    assert not remaining_set, f'DropColumnsTransformer.transform unknown columns {remaining_set}'
     
     X_ = X.copy()
+    xcols = X.columns.to_list()
+    actual_list = [col for col in self.column_list if col in xcols]  #some might be missing from X columns
     if self.action=='drop':
-      X_ = X_.drop(columns=self.column_list)
+      if actual_list != self.column_list:
+        print(f'DropColumnsTransformer.transform warning: columns to drop not in X: {set(self.column_list) - set(xcols}')
+      X_ = X_.drop(columns=actual_list)
     else:
-      X_ = X_[self.column_list]
+      if actual_list != self.column_list:
+        print(f'DropColumnsTransformer.transform warning: columns to keep not in X: {set(self.column_list) - set(xcols}')
+      X_ = X_[actual_list]
     return X_
 
   def fit_transform(self, X, y = None):
