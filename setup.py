@@ -26,7 +26,7 @@ class DropColumnsTransformer(BaseEstimator, TransformerMixin):
     actual_list = [col for col in self.column_list if col in xcols]  #some might be missing from X columns
     if self.action=='drop':
       if actual_list != self.column_list:
-        print(f'DropColumnsTransformer.transform warning: columns to drop not in X: {set(self.column_list) - set(xcols}')
+        print(f'DropColumnsTransformer.transform warning: columns to drop not in X: {set(self.column_list) - set(xcols)}')
       X_ = X_.drop(columns=actual_list)
     else:
       if actual_list != self.column_list:
