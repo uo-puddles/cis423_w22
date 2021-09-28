@@ -230,3 +230,20 @@ titanic_transformer_v1 = Pipeline(steps=[
     ('class', MappingTransformer('Class', {'Crew': 0, 'C3': 1, 'C2': 2, 'C1': 3})),
     ('ohe', OHETransformer(target_column='Joined')),
     ], verbose=True)
+
+#week 9
+
+def create_models(ensemble_df):
+  import json
+  model_list = []
+  for i in range(len(ensemble_df)):
+    row = ensemble_df.loc[i].to_list()
+    exp = f'{row[0]}('
+    #writing and reading to file stringifies the dictionary - have to change back
+    hps = json.loads(row[1]) if isinstance(row[1], str) else row[1]
+    for h in hps.keys():
+      exp += f'{h}={hps[h]},'
+    exp += ')'
+    print(exp)
+    model_list.append(eval(exp))
+  return model_list
