@@ -6,7 +6,7 @@ from sklearn.pipeline import Pipeline
 import pandas as pd
 import numpy as np
 
-import import sklearn.metrics
+import sklearn.metrics
 
 #drop by removing or keeping
 class DropColumnsTransformer(BaseEstimator, TransformerMixin):
